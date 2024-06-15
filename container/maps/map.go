@@ -13,6 +13,42 @@ func Keys[K comparable, V any](m map[K]V) container.Set[K] {
 	return keys
 }
 
+func Values[K comparable, V comparable](m map[K]V, uniq bool) []V {
+	if uniq {
+		values := sets.NewHashSet[V]()
+		for _, v := range m {
+			values.Add(v)
+		}
+		return values.Items()
+	}
+	values := []V{}
+	for _, v := range m {
+		values = append(values, (v))
+	}
+	return values
+}
+
+func ValuesWith[K comparable, V any, VV comparable](m map[K]V, fn func(V) VV, uniq bool) []V {
+	if uniq {
+		temp := map[VV]struct{}{}
+		list := []V{}
+		for _, v := range m {
+			vv := fn(v)
+			if _, ok := temp[vv]; ok {
+				continue
+			}
+			temp[vv] = struct{}{}
+			list = append(list, v)
+		}
+		return list
+	}
+	values := []V{}
+	for _, v := range m {
+		values = append(values, (v))
+	}
+	return values
+}
+
 func Equal[K comparable, V comparable](a, b map[K]V) bool {
 	if len(a) != len(b) {
 		return false
